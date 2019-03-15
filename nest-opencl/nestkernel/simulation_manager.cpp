@@ -760,7 +760,8 @@ nest::SimulationManager::update_()
 	    printf("Post Deliver events: %0.3f\n", diff);
 #endif
 
-#ifdef PROFILING
+#ifdef BREAKDOWN
+	    struct timeval start_time, end_time, diff_time;
 	    gettimeofday(&start_time, NULL);
 #endif
 
@@ -773,7 +774,7 @@ nest::SimulationManager::update_()
 	    printf("Deliver static events: %0.3f\n", diff);
 #endif
 
-#ifdef PROFILING
+#ifdef BREAKDOWN
 	    gettimeofday(&end_time, NULL);
 	    timersub(&end_time, &start_time, &diff_time);
 	    double diff = (double)diff_time.tv_sec*1000 + (double)diff_time.tv_usec/1000;
@@ -943,10 +944,6 @@ nest::SimulationManager::update_()
 
       if (thrd < this->num_gpu_threads)
 	{
-#ifdef PROFILING
-	  struct timeval start_time, end_time, diff_time;
-	  gettimeofday(&start_time, NULL);
-#endif
 
 	  gpu_exc->update_type = 2;
 	  //if (gpu_exc->updated_nodes.empty())
@@ -956,29 +953,35 @@ nest::SimulationManager::update_()
 
       if (thrd < this->num_gpu_threads)
 	{
+
+#ifdef BREAKDOWN
+	  struct timeval start_time, end_time, diff_time;
+	  gettimeofday(&start_time, NULL);
+#endif
+
 	  mass_update_nodes(gpu_exc->updated_nodes); //(thread_local_nodes);
 
-#ifdef PROFILING
+#ifdef BREAKDOWN
 	  gettimeofday(&end_time, NULL);
 	  timersub(&end_time, &start_time, &diff_time);
 	  double diff = (double)diff_time.tv_sec*1000 + (double)diff_time.tv_usec/1000;
 	  update_time += diff;
-	  printf("Mass update: %0.3f\n-----\n", update_time);
+	  printf("Update: %0.3f\n-----\n", update_time);
 #endif
 
-#ifdef PROFILING
+#ifdef BREAKDOWN
 	  gettimeofday(&start_time, NULL);
 #endif
 
 	  gpu_exc->deliver_events();
 	  //gpu_exc->deliver_static_events();
       
-#ifdef PROFILING
+#ifdef BREAKDOWN
 	  gettimeofday(&end_time, NULL);
 	  timersub(&end_time, &start_time, &diff_time);
 	  diff = (double)diff_time.tv_sec*1000 + (double)diff_time.tv_usec/1000;
 	  deliver_time += diff;
-	  printf("2nd deliver event: %0.3f\n", deliver_time);
+	  printf("Spike deliver: %0.3f\n", deliver_time);
 #endif
 	  // std::cout << "start insert_events" << std::endl;
 	  // gpu_exc->insert_events();

@@ -743,5 +743,9 @@ EventDeliveryManager::gather_events( bool done )
   }
   stw_local.stop();
   time_communicate_ += stw_local.elapsed();
+
+#ifdef BREAKDOWN
+  printf("MPI communication: %0.3f\n", time_communicate_);
+#endif
 }
 }

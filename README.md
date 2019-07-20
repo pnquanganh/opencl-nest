@@ -1,3 +1,3 @@
 # OpenCL-NEST
 
-Implementation of spiking neural network simulator NEST on GPU in OpenCL
+Implemention Spiking neural network simulator NEST on multi-GPU and distributed GPU
